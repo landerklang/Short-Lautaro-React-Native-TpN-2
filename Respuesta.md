@@ -114,3 +114,23 @@ console.log(c.Tamaño);
 ## a) ¿Qué estructura describe el historial de pantallas de un Stack? ¿Qué pantalla es la visible y qué operación hace “atrás”?
 
 _El historia de pantalla describe una estructura tipo LIFO, la pantalla que es visible es la que esta en la cima del tome, atras utiiliza el metodo pop para colocar como visible al tenultima pantalla que esta en la cima_
+
+## b) ¿Qué estructura usa Expo Router para las acciones de navegación? ¿Qué pasa si el usuario toca dos links muy rápido?
+
+_Expo router utiliza una estrutura de tipo FIFO es decir que el sistema encola cada acciones que active el usuario deacuerdo a su orden de llegada y se procesan desde el frente, cuando el usario le da a dos link el sistema mostrara cual fue el primero en darle y luego seguira con el otro_
+
+# B1. Del archivo a la URL
+
+## Completá la tabla. Si el archivo no genera una pantalla, explicá qué hace. Si genera un problema,
+
+indicalo.
+Archivo URL que genera / función
+src/app/(tabs)/index.tsx / Genera la Url / del grupo de tablas index es la pantalla principal de la aplicacion
+src/app/acerca.tsx / Genera la Url /acerca es una pantalla de acerca de
+src/app/(tabs)/perfil.tsx / Genera la Url /perfil del grupo de tablas es la pantalla que mostrar el perfil del usuario
+src/app/(tabs)/productos/index.tsx / Genera la Url /productos/ del grupo de tablas es la pantalla que muestra todo los producto que tiene la aplicacion
+src/app/(tabs)/productos/[id].tsx / Genera la Url /productos/:id del grupo de tablas es la pantalla que muestra informacion del producto seleccionado
+src/app/docs/[...slug].tsx / Es una ruta cacth-all y se encargar de guardar todas las ruta que el usuario haya navegado desde docs
+src/app/\_layout.tsx / No es una pantalla es una archivo que se encarga de envolver pantallas en su carpeta
+src/app/+not-found.tsx / Es una funcion que se encargar de capturar cuando el usario entra a una url que no se encuentra en la aplicacion
+src/app/Boton.tsx / Es una funcion que se encargar de colocar un boton no deberia de esta en carpeta de pantallas deberia de esta en la de componentes
