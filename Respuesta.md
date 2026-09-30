@@ -130,7 +130,16 @@ src/app/acerca.tsx / Genera la Url /acerca es una pantalla de acerca de
 src/app/(tabs)/perfil.tsx / Genera la Url /perfil del grupo de tablas es la pantalla que mostrar el perfil del usuario
 src/app/(tabs)/productos/index.tsx / Genera la Url /productos/ del grupo de tablas es la pantalla que muestra todo los producto que tiene la aplicacion
 src/app/(tabs)/productos/[id].tsx / Genera la Url /productos/:id del grupo de tablas es la pantalla que muestra informacion del producto seleccionado
-src/app/docs/[...slug].tsx / Es una ruta cacth-all y se encargar de guardar todas las ruta que el usuario haya navegado desde docs
+src/app/docs/[...slug].tsx / Es una ruta catch-all y se encarga de capturar cualquier url que se encuentre dentro de docs es para mostrar contenido segun la url
 src/app/\_layout.tsx / No es una pantalla es una archivo que se encarga de envolver pantallas en su carpeta
-src/app/+not-found.tsx / Es una funcion que se encargar de capturar cuando el usario entra a una url que no se encuentra en la aplicacion
-src/app/Boton.tsx / Es una funcion que se encargar de colocar un boton no deberia de esta en carpeta de pantallas deberia de esta en la de componentes
+src/app/+not-found.tsx / Es una pantalla especial que aparece cuando expo router no encuentra la ruta
+src/app/Boton.tsx / Es un componente que se encargar de colocar un boton y esta esta en la carpeta de app generando una ruta llamada Boton lo cual no deberia de hacer eso.
+
+# B2. De la URL al archivo
+
+## Indicá qué archivo (ruta completa dentro de src/app) tenés que crear para que existan estas URLs:
+
+/categorias/bebidas (y cualquier otra categoría) / src/app/categorias/[categorias].tsx
+/buscar?q=mate&categoria=kiosco / src/app/buscar.tsx
+/ayuda/pagos/tarjeta y /ayuda/horarios / src/app/ayuda/pagos/tarjeta.tsx y src/app/ayuda/horarios.tsx
+/ayuda (con una pantalla propia) / src/app/ayuda/index.tsx
