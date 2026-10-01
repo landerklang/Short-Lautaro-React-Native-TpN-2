@@ -143,3 +143,72 @@ src/app/Boton.tsx / Es un componente que se encargar de colocar un boton y esta 
 /buscar?q=mate&categoria=kiosco / src/app/buscar.tsx
 /ayuda/pagos/tarjeta y /ayuda/horarios / src/app/ayuda/pagos/tarjeta.tsx y src/app/ayuda/horarios.tsx
 /ayuda (con una pantalla propia) / src/app/ayuda/index.tsx
+
+# B3. Verdadero o falso
+
+## Indicá V o F y justificá las falsas.
+
+## a) Con Expo Router, cada pantalla nueva se debe registrar en una tabla de configuración. F
+
+Rta: Es falso en expo router utiliza file-based routing es decir que no es necesario configurar las tablas esta ya crea los archivos y automaticamente se convierte en rutas
+
+## b) Los archivos \_layout.tsx son pantallas que el usuario puede visitar. F
+
+Rta: Es falso Porque los \_layout.tsx no son pantallas son archivos que se encargan de envolver pantallas en su carpeta
+
+## c) Una carpeta entre paréntesis, como (tabs), no aparece en la URL. V
+
+## d) Para agregar una librería conviene usar npm install, porque siempre trae la última versión. F
+
+Rta: Es falso porque el comando npm install lo que hace es instalar las dependencias que se encuentra en el package.json y esta le dice de forma exacta a npm que version instalar solamente si se colocar el mismo comando pero el nombre de la dependencia alado se instalara la ultima version.
+
+## e) En package.json, "main": "expo-router/entry" reemplaza al viejo App.tsx. V
+
+## f) La ruta /\_sitemap lista todas las rutas de la app y sirve para depurar. V
+
+## g) Si existen docs/index.tsx y docs/[...slug].tsx, la URL /docs muestra docs/index.tsx. V
+
+## h) En SDK 57, expo-router usa el mismo número de versión mayor que el SDK (57) V
+
+# C1. Métodos de router
+
+## Completá qué le hace cada método a la pila del Stack.
+
+Método Qué le hace a la pila
+router.push(href) | Este metodo lo que hace es añadirle encima a la pila
+router.navigate(href) | Este metodo lo que hace es navega a la pantalla si existe en la pila vuelve a ella si no la agrega
+router.replace(href) | Este metodo lo que hace es remplazar el elemento que se encuentre en la pila superior por la que esta ahora
+router.back() | Este metodo lo que hace sacar un elemento de la pila y mostrar el que se encuentra debajo de la cima
+router.dismissTo(href) | Este metodo lo que hace es descartar un numero de pantallas en la pila hasta llegar al href indicado
+router.dismissAll() | Este metodo lo que hace es descartar todas las pantallas de la pila
+router.canGoBack() | Este metodo lo que hace es validar si el usuario puede ir atras
+router.setParams({...}) | Este metodo lo que hace es permitir cambiar los parametro de la pantalla actual sin cambiarlos
+
+<!-- Link:navegacion declarativa,inicias por el usuario
+router:Navegacion imperativa,decidido por el codigo -->
+<!-- modal: son componentes de interfaz de usuario para mostrar en una ventaja emergente -->
+
+# C3. ¿Link o router?
+
+## Para cada situación, elegí <Link> o router e indicá el método o prop que usarías. Justificá.
+
+## a) El usuario toca la tarjeta de un producto en una lista. Link
+
+Rta:Es link porque el usuario toca la tarjeta. Es navegacion declarativa Se envuelve la tarjeta con
+`Link href={\/productos/${id}`}`>`.
+
+## b) Se guarda un formulario, la API responde OK y hay que mostrar la pantalla de éxito. Router
+
+Rta: Es router porque el sistema debe de guardar el formulario y esperar a que la base de datos le responda con un ok para poder enviarle el mensaje al usuario `router.push(/exitos)`
+
+## c) Botón “Cancelar” dentro de un modal. Router
+
+Rta: Es un Router porque es una funcion que el sistema añadio que se muestre durante una ventana emergente `router.back()`
+
+## d) Después de un login exitoso hay que ir a la pantalla principal. Router
+
+Rta:Es un router porque el sistema una ves que haya recivido el formulario y lo haya validado se encargar de redirigir al usuario a la pantalla principal. `router.replace(/home)`
+
+## e) Volver desde el detalle de un pedido directamente a la lista de pedidos, que quedó tres pantalla mas abajo Router
+
+Rta: Es un Router porque es funcion que se encargar de ir un nuemor de pantallas hasta llegar al que el usuario eligio `router.dismissTo("/lista_pedidos")`
