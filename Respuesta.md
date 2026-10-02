@@ -212,3 +212,27 @@ Rta:Es un router porque el sistema una ves que haya recivido el formulario y lo 
 ## e) Volver desde el detalle de un pedido directamente a la lista de pedidos, que quedó tres pantalla mas abajo Router
 
 Rta: Es un Router porque es funcion que se encargar de ir un nuemor de pantallas hasta llegar al que el usuario eligio `router.dismissTo("/lista_pedidos")`
+
+# C4. Escribí el código
+
+## a) Un <Link> que abra el producto con id 8 usando href como objeto.
+
+## b) Un <Link> a /perfil que siempre apile, aunque la pantalla ya exista.
+
+## c) Un botón (Pressable) propio que funcione como link a /carrito usando asChild.
+
+# C5. Pensar
+
+## En una web, cada <Link> se convierte en un <a href> real. ¿Qué ventaja concreta tiene eso para el usuario? ¿Qué pasa en el celular, donde no hay barra de direcciones?
+
+Rta: le da al usuario un control en la navegacion permitiendo decidir como abrir el link si quiere copiar la url, abrir en una nueva pestaña, y tambien ayuda para el SEO, en el celular esta funciones se pierden la navegacion depende del stack de pantallas y el boton "atras" el usuario no puede copiar la url ni abrir el link en paralelo.
+
+# D1. Comparación
+
+## Completá la tabla.
+
+Stack|Tabs|Drawer
+¿Apila pantallas? |Sí. Cada navegación agrega una pantalla encima (LIFO).|No. Las pantallas son hermanas, se alternan.|No. Es un menú lateral que se superpone.
+¿Cómo cambia de pantalla el usuario? |Navegando hacia adelante (push) o hacia atrás (back / gesto).|Tocando las pestañas de la barra inferior.|Deslizando desde el borde o tocando el botón de menú.
+¿Desde dónde se importa en SDK 57? |import { Stack } from 'expo-router'|import { Tabs } from 'expo-router'|import { Drawer } from 'expo-router/drawer'  
+Un caso de uso típico |Lista → detalle (ej: productos → producto). Flujo jerárquico.|Navegación principal (Inicio, Perfil, Configuración).|App con muchas secciones (ej: menú lateral de configuración).
