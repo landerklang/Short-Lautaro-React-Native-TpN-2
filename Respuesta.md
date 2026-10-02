@@ -236,3 +236,125 @@ Stack|Tabs|Drawer
 ¿Cómo cambia de pantalla el usuario? |Navegando hacia adelante (push) o hacia atrás (back / gesto).|Tocando las pestañas de la barra inferior.|Deslizando desde el borde o tocando el botón de menú.
 ¿Desde dónde se importa en SDK 57? |import { Stack } from 'expo-router'|import { Tabs } from 'expo-router'|import { Drawer } from 'expo-router/drawer'  
 Un caso de uso típico |Lista → detalle (ej: productos → producto). Flujo jerárquico.|Navegación principal (Inicio, Perfil, Configuración).|App con muchas secciones (ej: menú lateral de configuración).
+
+# D2. Cada tab tiene su pila
+
+<!-- Cada tab tiene su propio Stack. Cambiar de tab no resetea la pila del tab anterior -->
+
+## En una app con pestañas Inicio y Productos (Productos tiene su propio Stack), el usuario está en Productos, abre el detalle del producto 4, cambia a Inicio y vuelve a Productos. ¿Qué pantalla ve? ¿Por qué? ¿Qué app que uses todos los días se comporta así?
+
+Rta: Ve la pantalla de detalle del producto 4, Porque cada tab mantiene su propia pila de navegacion independente eso quiere decir que si cambia de tabs no se borrara la anterior si no que se guardara en segundo plano para cuando vuelvas una appa que utiliza esto es youtube.
+
+# D3. ¿Dónde va cada pantalla?
+
+## Aplicando la regla práctica de navegadores anidados, indicá si cada pantalla va en el Stack raíz o dentro de una tab:
+
+a) El detalle de un producto, que debe mantener visible la barra de pestañas.
+Rta: Dentro del stack del tab productos, porque la barra de tabs debe seguir visible. Si va en el raíz, la tapa.
+b) Un modal para confirmar una compra, que debe tapar la barra de pestañas.
+Rta: Stack raiz, un modal debe cubrir toda la pantalla, incluida la barra de tabs.
+c) La pantalla de login que se abre como modal. stack tabs
+Rta: Stack raiz, es un modal. Debe tapar todo. Además, el login no pertenece a ninguna tab.
+d) La pantalla “Mis pedidos anteriores” dentro de la sección Perfil.
+Rta: dentro del stack del tab perfiles, es una subpantalla de Perfil. La barra de tabs debe seguir visible.
+
+# D4. Configurar el Stack
+
+## Observá el layout y respondé:
+
+<!-- src/app/_layout.tsx
+import { Stack } from 'expo-router';
+export default function LayoutRaiz() {
+ return (
+ <Stack screenOptions={{ headerBackButtonDisplayMode: 'minimal' }}>
+ <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+ <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+ <Stack.Screen
+ name="hoja"
+ options={{ presentation: 'formSheet', sheetAllowedDetents: [0.5, 0.9] }}
+ />
+ </Stack>
+ );
+}` -->
+
+## a) ¿Qué diferencia hay entre screenOptions y las options de un Stack.Screen?
+
+Rta: La diferencia que hay entre screenOptions y options de un stack.screen es que el screenOption son configuraciones globales que se realizan a las screen mientras que stack.screen es solamente a una en especifico
+
+## b) ¿Por qué (tabs) tiene headerShown: false?
+
+Rta: Para que el Stack raíz no muestre su propio header encima del header de las Tabs. Como (tabs) es una pantalla del Stack, si no se oculta su header, se verían dos headers apilados: el del Stack (con el nombre de la ruta) y el de las Tabs.
+
+## c) Si existe src/app/perfil-publico.tsx pero no está declarada en el Stack, ¿existe la pantalla? ¿Para qué sirve declararla?
+
+Rta: Sí, existe. En Expo Router, todo archivo dentro de app/ genera una ruta automáticamente. No hace falta declararlo en el Stack, para configurar sus opciones
+
+## d) Nombrá cuatro valores posibles de presentation. ¿Cuál usarías para una hoja inferior que se abre al 50%?
+
+Rta: Para una hoja inferior que se abre al 50%, usaría presentation: 'formSheet' con sheetAllowedDetents: [0.5]. El formSheet es el estilo de presentación para hojas inferiores, y sheetAllowedDetents permite definir las alturas (detents) a las que se puede ajustar la hoja.
+
+## e) ¿Cómo cambiarías el título del header desde la propia pantalla de detalle para que diga “Producto 7”?
+
+Rta:Para cambiar el título desde la pantalla de detalle, usaría el componente <Stack.Screen /> dentro del archivo [id].tsx, con options={{ title: \Producto ${id} }}. El id se obtiene con useLocalSearchParams(). Esto sobreescribe el título definido en el layout y permite que sea dinámico según el producto.
+
+# D5. Tabs y Drawer en SDK 57
+
+## a) ¿Qué cambió en SDK 57 al importar Tabs? ¿Qué alternativa experimental existe?
+
+El Tabs clásico (importado de expo-router) sigue funcionando igual. Lo que cambió es que se agregó una alternativa experimental de tabs nativas.
+
+## b) ¿Qué dos paquetes necesita el Drawer y qué componente conviene poner en el layout raíz para los gestos?
+
+Paquetes necesarios:
+
+react-native-reanimated
+
+react-native-gesture-handler
+
+(En SDK 56+ también se menciona react-native-worklets)
+
+Componente para los gestos en el layout raíz:
+
+GestureHandlerRootView de react-native-gesture-handler.
+
+## c) ¿Hace falta instalar @react-navigation/drawer en SDK 57? ¿Por qué?
+
+No es estrictamente necesario. Desde SDK 56, porque el drawer navigator viene incluido en expo-router y usa react-native-drawer-layout internamente.
+
+## d) Si hay navegadores anidados, ¿en qué navegador actúa router.back(
+
+Rta: Actúa en el navegador más interno (el stack más profundo) que tenga una pantalla en su pila.
+
+# E1. Encontrá el error
+
+# Los productos tienen id numérico ({ id: 3, nombre: "Chipá" }). La pantalla nunca encuentra el producto. Explicá por qué y corregilo.
+
+src/app/(tabs)/productos/[id].tsx
+export default function DetalleProducto() {
+const { id } = useLocalSearchParams<{ id: string }>();
+const producto = productos.find((p) => p.id === id);
+if (id === 3) console.log('Es el chipá');
+if (!producto) return <Text>No existe el producto {id}</Text>;
+return <Text>{producto.nombre}</Text>;
+}
+
+Version corregida
+
+export default function DetalleProducto() {
+const { id } = useLocalSearchParams<{ id: string }>();
+const idNumerico = Number(id);
+const producto = productos.find((p) => p.id === idNumerico);
+if (idNumerico === 3) console.log('Es el chipá');
+if (!producto) return <Text>No existe el producto {id}</Text>;
+return <Text>{producto.nombre}</Text>;
+}
+Rta: el problema es que la asignacion del valor del id lo define como string asi que lo que debe hacer es transformarlo a numero para que la comparativa funcione correctamente.
+
+# E2. Catch-all
+
+## Para src/app/docs/[...slug].tsx, indicá el valor de slug en cada caso:
+
+URL | slug
+/docs/react | slug = ['react']
+/docs/react/hooks/useState | slug=['react','hooks','useState']
+/docs no realiza ningun match
