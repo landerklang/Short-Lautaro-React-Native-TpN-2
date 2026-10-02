@@ -404,3 +404,115 @@ Rta: Sirve para ejecutar código cada vez que la pantalla recibe el foco un ejem
 ## c) La URL /productos/mate abre la pantalla de detalle aunque no exista ese producto. ¿Es un error de Expo Router? ¿De quién es la responsabilidad?
 
 Rta:No. Expo Router solo se encarga de la navegación: mapea la URL al archivo [id].tsx y le pasa el param id: 'mate'. No sabe qué datos existen en tu app, la responsabilidad es del programador especificamente el que se encarga de la logica de pantalla
+
+# F1. Redirect
+
+## a) ¿Qué hace <Redirect href="/productos" /> y a qué método de router equivale?
+
+Rta:<Redirect> es un componente que, al renderizarse, redirige inmediatamente al usuario a la ruta indicada. No se ve nada en pantalla: solo se dispara la redirección, equivale a router.replace('/productos').
+
+## b) ¿Por qué una redirección debe reemplazar y no apilar? Describí el problema que aparecería
+
+Porque si usara push, la pantalla original quedaría en la pila, y el usuario podría volver a ella con el botón "atrás".
+El problema que este generaria es que se crearia un bucle de redirecciones el usuario va a /perfil como no esta logueado se redirige a /login con push la pila queda ["/perfil","login"] pulsa el boton de atras vuelve a perfil y este le redirige a login y ahora se añadio otro login a la pila y si el usuario le da devuelta al botoon "atraz" se repite la situacion generando otro login
+
+# F2. Stack.Protected
+
+## Completá los guard para que privado solo exista con sesión y login solo sin sesión. Luego respondé.
+
+src/app/\_layout.tsx
+function NavegacionRaiz() {
+const { usuario } = useAuth();
+const conSesion = usuario !== null;
+return (
+<Stack>
+<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+<Stack.Protected guard={ **\_\_** }>
+<Stack.Screen name="privado" />
+</Stack.Protected>
+<Stack.Protected guard={ **\_\_** }>
+<Stack.Screen name="login" options={{ presentation: 'modal' }} />
+</Stack.Protected>
+</Stack>
+);
+}
+
+Version corregida:
+src/app/\_layout.tsx
+function NavegacionRaiz() {
+const { usuario } = useAuth();
+const conSesion = usuario !== null;
+return (
+<Stack.Protected guard={conSesion}>
+<Stack.Screen name="privado" />
+</Stack.Protected>
+
+<Stack.Protected guard={!conSesion}>
+<Stack.Screen name="login" options={{ presentation: 'modal' }} />
+</Stack.Protected>
+)}
+
+## a) ¿Qué le pasa a una pantalla cuando su guard es false?
+
+Rta:La pantalla deja de existir en el navegador. No se puede navegar a ella.
+
+## b) Al iniciar sesión, el modal de login se cierra solo, sin llamar a router.back(). ¿Por qué?
+
+Rta: Porque al cambiar usuario, conSesion se vuelve true, el guard de login pasa a false, y Expo Router elimina la pantalla del navegador. El modal se cierra solo como reacción al cambio de estado.
+
+## c) Aparece el aviso “The action ‘NAVIGATE’ … was not handled by any navigator”. ¿Qué lo causa y cómo se evita?
+
+Rta: Lo causa intentar navegar a una pantalla cuyo guard es false. Se evita no navegando manualmente a rutas protegidas o verificando el estado de sesión antes de navegar.
+
+## d) ¿Qué ventaja tiene Stack.Protected frente a poner un <Redirect> condicional en cada pantalla?
+
+Rta: Stack.Protected centraliza la protección en el layout, evita parpadeos, y las pantallas no necesitan saber de autenticación. Con <Redirect> habría que repetir la lógica en cada pantalla y la ruta existiría igual.
+
+# F3. 404, anchor y rutas tipadas
+
+## Explicá brevemente para qué sirve cada uno y en qué archivo se define:
+
+## a) +not-found.tsx
+
+Rta:+not-found.tsx: es la pantalla 404 de la app. Se muestra cuando la URL no matchea ninguna ruta. Se define en src app/+not-found.tsx
+
+## b) export const unstable_settings = { anchor: "(tabs)" }
+
+Rta: +not-found.tsx: es la pantalla 404 de la app. Se muestra cuando la URL no matchea ninguna ruta. Se define en src/app/+not-found.tsx
+
+## c) typedRoutes: ¿qué pasa si escribís <Link href="/prodcutos" />? ¿Dónde se generan los tipos?
+
+Rta: typedRoutes: genera tipos de TypeScript para las rutas, permitiendo detectar errores de escritura en el editor. Si escribís <Link href="/prodcutos" />, TypeScript marca un error porque esa ruta no existe. Los tipos se generan en expo-env.d.ts, en la raíz del proyecto.
+
+# F4. Deep links
+
+## La app tiene "scheme": "comedoripf" en app.json y la compu de desarrollo tiene la IP 192.168.1.20. Escribí la URL que abre el plato 7 (/menu/7) en cada caso:
+
+Dónde | URL
+App instalada (build propia) | comedoripf://menu/7
+Expo Go en desarrollo | exp://192.168.1.20:8081/--/menu/7
+Web (npx expo start --web) | http://localhost:8081/menu/7
+¿Qué significa la parte /--/ en la URL de Expo Go? ¿Por qué el scheme propio no funciona dentro de
+Expo Go?
+
+Rta: El /--/ es un separador que usa Expo Go para distinguir la dirección del servidor de desarrollo (antes del /--/) de la ruta interna de la app (después del /--/), el /--/ es un separador que usa Expo Go para distinguir la dirección del servidor de desarrollo (antes del /--/) de la ruta interna de la app (después del /--/).
+
+# F5. Errores comunes
+
+## Para cada situación explicá la causa y la solución:
+
+## a) Al usar <Link href="/perfil" asChild> con un <Pressable style={[estilos.boton, activo && estilos.activo]}> aparece: “You are passing an array of styles to a child of <Slot>”.
+
+Rta: El error ocurre porque asChild pasa las props al hijo y no maneja bien arrays de estilos. Solución: usar StyleSheet.flatten([...]) para convertir el array en un objeto único.
+
+## b) Un compañero creó src/app/TarjetaProducto.tsx para reutilizar un componente y ahora la app tiene una ruta nueva.
+
+Rta:Cualquier archivo dentro de app/ genera una ruta. Solución: mover TarjetaProducto.tsx a src/components/ para que no sea una ruta.
+
+## c) Después de iniciar sesión se usa router.push("/") y, al tocar atrás, el usuario vuelve al login.
+
+Rta:push apila la pantalla nueva y deja el login en la pila. Solución: usar router.replace("/") para reemplazar el login por la home.
+
+## d) Expo Go dice que el proyecto es incompatible después de instalar un paquete con npm install.
+
+Rta:npm install instala la última versión, que puede ser incompatible con el SDK de Expo. Solución: usar npx expo install <paquete>, que elige la versión compatible.
