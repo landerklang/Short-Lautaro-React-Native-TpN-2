@@ -358,3 +358,49 @@ URL | slug
 /docs/react | slug = ['react']
 /docs/react/hooks/useState | slug=['react','hooks','useState']
 /docs no realiza ningun match
+
+# E3. Anatomía de una URL
+
+## Dada la URL rutasipf://buscar?q=mate&categoria=bebidas:
+
+## a) Identificá el scheme, la ruta y los parámetros de búsqueda.
+
+Rta: El schema es rutasipf, la ruta es /buscar, y el parametro de busqueda es q=mate y categoria=bebidas
+
+## b) ¿Qué devuelve useLocalSearchParams() en buscar.tsx?
+
+Rta: Un objeto con los dos parámetros como strings.
+
+## c) ¿Hacen falta corchetes en el nombre del archivo para recibir q? ¿Por qué?
+
+Rta: No, los corchetes se utiliza cuando es una ruta dinamica en este caso la q es una query param no un segmento de ruta
+
+## d) En el buscador, cada vez que el usuario escribe se llama a router.setParams({ q: texto }) en lugar de router.push. Dá dos razones.
+
+Rta: Razon 1: setParams actualiza los parámetros de la pantalla actual sin navegar. El usuario sigue en el buscador.
+Razon 2: push apilaría una pantalla por cada tecla, contaminando la pila. setParams no apila nada.
+
+# E4. ¿Dónde estoy?
+
+# Completá los valores de cada hook en las dos URLs de la app de ejemplo (buscar.tsx está en el Stack raíz; el detalle está en (tabs)/productos/[id].tsx).
+
+Hook En /productos/3 En /buscar?q=chipa
+usePathname() | /productos/3 | /buscar
+useSegments() |['(tabs)', 'productos', '[id]'] | ['buscar']
+useLocalSearchParams() |{ id: '3' } | { q: 'chipa' }
+
+# E5. Local vs global
+
+## a) ¿Cuál es la diferencia entre useLocalSearchParams y useGlobalSearchParams? ¿Cuál es la opción por defecto y por qué?
+
+Rta: la diferencia que hay entre useLocalSearchParams y useGlobalSearchParams es que el useLocal devuelve los params de esta pantalla mientras que el global devuelve los params de toda las rutas activas de la app, La opcion que es utilizado por defecto es uselocal Porque este es mas eficiente ya que el otro puede genera re-render innecesarios en pantallas que estan en segundo plano.
+
+## b) ¿Para qué sirve useFocusEffect? Dá un ejemplo de uso.
+
+<!--Recibir foco se refiere a la pantalla o funcion que actualmente esta el usuario-->
+
+Rta: Sirve para ejecutar código cada vez que la pantalla recibe el foco un ejemplo seria cuando mostra una lista de producto y queres que recargue cada ves que el usuario vuelve del detalle
+
+## c) La URL /productos/mate abre la pantalla de detalle aunque no exista ese producto. ¿Es un error de Expo Router? ¿De quién es la responsabilidad?
+
+Rta:No. Expo Router solo se encarga de la navegación: mapea la URL al archivo [id].tsx y le pasa el param id: 'mate'. No sabe qué datos existen en tu app, la responsabilidad es del programador especificamente el que se encarga de la logica de pantalla
